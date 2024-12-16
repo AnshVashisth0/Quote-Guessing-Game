@@ -5,11 +5,17 @@ The user will be given 4 chances to guess the author of a famous quote, In every
 
 <br>Approach
 Import module
+
       1.requests help us grab the page, when the response is received it is stored in the form of a string
+      
       2.bs4 library is used to create beasutifulSoup object.
+      
       3.csv library helps reading and writing CSV files using python
+      
       4.sleep function from time module helps add delay in the execution of the program.
+      
       5.choice function from random module returns a random element.
+      
 Create a list to store values scraped
 Scrape the details from this link: http//quotes.toscrape.com
 Extract data
