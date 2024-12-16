@@ -18,3 +18,8 @@ Return random items from the dictionary created
 Set number of guesses
 Write message for success and failure
 Keep giving hints until either number of chances reach zero or the user gets it right
+Time Complexity: 
+The time complexity of this code is O(N) because the while loop is iterating over quotes list N times.
+
+Space Complexity:
+The space complexity of this code is O(N) because the all_quotes list is storing N number of elements.
