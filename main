@@ -1,5 +1,6 @@
 import requests
 import string
+import unicodedata
 from bs4 import BeautifulSoup
 from csv import writer
 from time import sleep
@@ -9,36 +10,41 @@ from random import choice
 all_quotes = []
 
 # this part of the url is constant
-base_url = "http://quotes.toscrape.com/"
+base_url = "http://quotes.toscrape.com"
+
+# loop through all pages
+page_no = 1
 
 # this part of the url will keep changing
-url = "/page/1"
+url = f"/page/{page_no}"
 
 punctuation_remover = str.maketrans('', '', string.punctuation)
 
-while url:
+while page_no <= 10:
+    # concatenating both urls
+    # making request
+    res = requests.get(f"{base_url}{url}")
+    print(f"Now Scraping : {base_url}{url}")
+    soup = BeautifulSoup(res.text, "html.parser")
+    # extracting all elements
+    quotes = soup.find_all(class_="quote")
 
-	# concatenating both urls
-	# making request
-	res = requests.get(f"{base_url}{url}")
-	print(f"Now Scraping : {base_url}{url}")
-	soup = BeautifulSoup(res.text, "html.parser")
-
-	# extracting all elements
-	quotes = soup.find_all(class_="quote")
-
+    page_no += 1
     
-	for quote in quotes:
-		local_author = quote.find(class_="author").get_text().lower()
-		
-		all_quotes.append({
-			"text": quote.find(class_="text").get_text(), 
-			"author": local_author.translate(punctuation_remover).split(),
-			"bio-link": quote.find("a")["href"]
-		})
-	next_btn = soup.find(_class="next")
-	url = next_btn.find("a")["href"] if next_btn else None
-	sleep(2)
+    for quote in quotes:
+        local_author = unicodedata.normalize('NFKD', quote.find(class_="author").get_text().lower())
+        
+        all_quotes.append({
+            "text": quote.find(class_="text").get_text(), 
+            "author": local_author.translate(punctuation_remover).split(),
+            "bio-link": quote.find("a")["href"]
+        })
+    
+    next_btn = soup.find(class_="next")
+    url = next_btn.find("a")["href"] if next_btn else None
+    if url is None:  # Check if there is a next page
+        break
+    sleep(2)
 def game_Start():
 	quote = choice(all_quotes)
 	remaining_guesses = 4
@@ -84,5 +90,3 @@ if user_play_more.lower() == "yes" or user_play_more.lower() == "y":
     game_Start()
     
    
-
-
